@@ -1,6 +1,7 @@
-import { DatePipe, DecimalPipe } from '@angular/common'
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core'
+import { AsyncPipe, DatePipe, DecimalPipe } from '@angular/common'
+import { Component, Input } from '@angular/core'
 import { FlexModule } from '@ngbracket/ngx-layout/flex'
+import { Observable } from 'rxjs'
 
 import { ICurrentWeather } from '../interfaces'
 import { WeatherService } from '../weather/weather.service'
@@ -10,28 +11,13 @@ import { WeatherService } from '../weather/weather.service'
   templateUrl: './current-weather.component.html',
   styleUrls: ['./current-weather.component.css'],
   standalone: true,
-  imports: [FlexModule, DecimalPipe, DatePipe],
+  imports: [FlexModule, DecimalPipe, DatePipe, AsyncPipe],
 })
-export class CurrentWeatherComponent implements OnChanges {
-  constructor(private weatherService: WeatherService) {}
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['searchText']) {
-      // Perform actions when dataInput changes
-      console.log('dataInput changed:', changes['searchText'].currentValue)
-      this.populateCurrentWeather(changes['searchText'].currentValue)
-    }
-  }
+export class CurrentWeatherComponent {
   @Input() searchText!: string
-  current!: ICurrentWeather
-
-  populateCurrentWeather(userInput: string) {
-    const userInputTokens = userInput.split(',').map((s) => s.trim())
-    this.weatherService
-      .getCurrentWeather(
-        userInputTokens[0],
-        userInputTokens.length > 1 ? userInputTokens[1] : undefined
-      )
-      .subscribe((data) => (this.current = data))
+  current$: Observable<ICurrentWeather>
+  constructor(private weatherService: WeatherService) {
+    this.current$ = this.weatherService.currentWeather$
   }
   getOrdinal(date: number) {
     const n = new Date(date).getDate()

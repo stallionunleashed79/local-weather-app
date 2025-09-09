@@ -5,7 +5,6 @@ import { FlexModule } from '@ngbracket/ngx-layout/flex'
 
 import { CitySearchComponent } from './city-search/city-search.component'
 import { CurrentWeatherComponent } from './current-weather/current-weather.component'
-import { WeatherService } from './weather/weather.service'
 
 @Component({
   selector: 'app-root',
@@ -18,7 +17,7 @@ import { WeatherService } from './weather/weather.service'
         <div class="mat-caption v-pad">Your city, your forecast, right now!</div>
       </div>
       <div fxLayoutAlign="center">
-        <app-city-search (searchEvent)="doSearch($event)"></app-city-search>
+        <app-city-search></app-city-search>
       </div>
       <div fxLayout="row">
         <div fxFlex></div>
@@ -29,7 +28,7 @@ import { WeatherService } from './weather/weather.service'
             </mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <app-current-weather [searchText]="searchText"></app-current-weather>
+            <app-current-weather></app-current-weather>
           </mat-card-content>
         </mat-card>
         <div fxFlex></div>
@@ -46,9 +45,5 @@ import { WeatherService } from './weather/weather.service'
   ],
 })
 export class AppComponent {
-  constructor(private weatherService: WeatherService) {}
-  searchText!: string
-  doSearch(searchValue: string) {
-    this.searchText = searchValue
-  }
+  constructor() {}
 }
