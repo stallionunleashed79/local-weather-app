@@ -24,13 +24,10 @@ interface ICurrentWeatherData {
 }
 
 export interface IWeatherService {
-  getCurrentWeather(
-    search: string | number,
-    country?: string
-  ): Observable<ICurrentWeather>
+  getCurrentWeather(search: string, country?: string): Observable<ICurrentWeather>
   getCurrentWeatherByCoords(coords: GeolocationCoordinates): Observable<ICurrentWeather>
   readonly currentWeather$: BehaviorSubject<ICurrentWeather>
-  updateCurrentWeather(search: string | number, country?: string): void
+  updateCurrentWeather(search: string, country?: string): void
 }
 
 @Injectable({
@@ -38,7 +35,7 @@ export interface IWeatherService {
 })
 export class WeatherService implements IWeatherService {
   constructor(private httpClient: HttpClient) {}
-  updateCurrentWeather(search: string | number, country?: string): void {
+  updateCurrentWeather(search: string, country?: string): void {
     this.getCurrentWeather(search, country).subscribe((currentWeather) =>
       this.currentWeather$.next(currentWeather)
     )
@@ -60,10 +57,7 @@ export class WeatherService implements IWeatherService {
     return this.getCurrentWeatherHelper(uriParams)
   }
 
-  getCurrentWeather(
-    search: string | number,
-    country?: string
-  ): Observable<ICurrentWeather> {
+  getCurrentWeather(search: string, country?: string): Observable<ICurrentWeather> {
     let params = new HttpParams()
     if (typeof search === 'string') {
       params = params.set('q', country ? `${search},${country}` : search)
