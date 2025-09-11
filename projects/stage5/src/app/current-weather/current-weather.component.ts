@@ -14,14 +14,7 @@ import { WeatherService } from '../weather/weather.service'
 })
 export class CurrentWeatherComponent {
   @Input() searchText!: string
-  currentSignal = signal({
-    city: '--',
-    country: '--',
-    date: Date.now(),
-    image: '',
-    temperature: 0,
-    description: '',
-  } as ICurrentWeather)
+  currentSignal = signal({} as ICurrentWeather)
   constructor(private weatherService: WeatherService) {
     this.currentSignal = this.weatherService.currentWeatherSignal
   }

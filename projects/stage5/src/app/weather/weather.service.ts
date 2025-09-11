@@ -32,7 +32,14 @@ export interface IWeatherService {
   providedIn: 'root',
 })
 export class WeatherService implements IWeatherService {
-  readonly currentWeatherSignal = signal({} as ICurrentWeather)
+  readonly currentWeatherSignal = signal({
+    city: '--',
+    country: '--',
+    date: Date.now(),
+    image: '',
+    temperature: 0,
+    description: '',
+  } as ICurrentWeather)
   constructor(private httpClient: HttpClient) {}
 
   async updateCurrentWeatherSignal(search: string, country?: string): Promise<void> {
