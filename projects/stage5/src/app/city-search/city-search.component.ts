@@ -33,7 +33,7 @@ export class CitySearchComponent implements OnInit {
 
   populateCurrentWeather(userInput: string) {
     const userInputTokens = userInput.split(',').map((s) => s.trim())
-    this.weatherService.updateCurrentWeather(
+    this.weatherService.updateCurrentWeatherSignal(
       userInputTokens[0],
       userInputTokens.length > 1 ? userInputTokens[1] : undefined
     )

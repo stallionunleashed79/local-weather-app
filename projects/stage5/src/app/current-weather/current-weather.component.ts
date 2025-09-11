@@ -1,7 +1,6 @@
 import { AsyncPipe, DatePipe, DecimalPipe } from '@angular/common'
-import { Component, Input } from '@angular/core'
+import { Component, Input, signal } from '@angular/core'
 import { FlexModule } from '@ngbracket/ngx-layout/flex'
-import { Observable } from 'rxjs'
 
 import { ICurrentWeather } from '../interfaces'
 import { WeatherService } from '../weather/weather.service'
@@ -15,9 +14,16 @@ import { WeatherService } from '../weather/weather.service'
 })
 export class CurrentWeatherComponent {
   @Input() searchText!: string
-  current$: Observable<ICurrentWeather>
+  currentSignal = signal({
+    city: '--',
+    country: '--',
+    date: Date.now(),
+    image: '',
+    temperature: 0,
+    description: '',
+  } as ICurrentWeather)
   constructor(private weatherService: WeatherService) {
-    this.current$ = this.weatherService.currentWeather$
+    this.currentSignal = this.weatherService.currentWeatherSignal
   }
   getOrdinal(date: number) {
     const n = new Date(date).getDate()

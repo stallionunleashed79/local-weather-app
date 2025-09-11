@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http'
-import { Injectable } from '@angular/core'
-import { BehaviorSubject, Observable } from 'rxjs'
+import { Injectable, signal } from '@angular/core'
+import { firstValueFrom, Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 
 import { environment } from '../../environments/environment'
@@ -26,29 +26,22 @@ interface ICurrentWeatherData {
 export interface IWeatherService {
   getCurrentWeather(search: string, country?: string): Observable<ICurrentWeather>
   getCurrentWeatherByCoords(coords: GeolocationCoordinates): Observable<ICurrentWeather>
-  readonly currentWeather$: BehaviorSubject<ICurrentWeather>
-  updateCurrentWeather(search: string, country?: string): void
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class WeatherService implements IWeatherService {
+  readonly currentWeatherSignal = signal({} as ICurrentWeather)
   constructor(private httpClient: HttpClient) {}
-  updateCurrentWeather(search: string, country?: string): void {
-    this.getCurrentWeather(search, country).subscribe((currentWeather) =>
-      this.currentWeather$.next(currentWeather)
-    )
+
+  async updateCurrentWeatherSignal(search: string, country?: string): Promise<void> {
+    this.currentWeatherSignal.set(await this.getCurrentWeatherAsPromise(search, country))
   }
-  currentWeather$: BehaviorSubject<ICurrentWeather> =
-    new BehaviorSubject<ICurrentWeather>({
-      city: '--',
-      country: '--',
-      date: Date.now(),
-      image: '',
-      temperature: 0,
-      description: '',
-    })
+
+  getCurrentWeatherAsPromise(search: string, country?: string): Promise<ICurrentWeather> {
+    return firstValueFrom(this.getCurrentWeather(search, country))
+  }
 
   getCurrentWeatherByCoords(coords: GeolocationCoordinates): Observable<ICurrentWeather> {
     const uriParams = new HttpParams()
