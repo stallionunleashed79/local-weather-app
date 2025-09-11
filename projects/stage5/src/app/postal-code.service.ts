@@ -1,8 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http'
 import { Injectable } from '@angular/core'
 import { defaultIfEmpty, flatMap, Observable } from 'rxjs'
-import { environment } from 'src/environments/environment'
 
+import { environment } from '../environments/environment'
 import { IPostalCode, IPostalCodeData, IPostalCodeService } from './models/postal.code'
 
 @Injectable({
@@ -17,12 +17,15 @@ export class PostalCodeService implements IPostalCodeService {
       .set('postalcode', postalCode)
     return this.httpClient
       .post<IPostalCodeData>(
-        `${environment.baseUrl}${environment.geonamesApi}.geonames.org/
+        `${environment.baseUrl}${environment.geonamesapi}.geonames.org/
         postalCodeSearchJSON`,
         { params }
       )
       .pipe(
-        flatMap((data) => data.postalCodes),
+        flatMap((data) => {
+          console.log(`POSTAL CODES ${JSON.stringify(data.postalCodes)}`)
+          return data.postalCodes
+        }),
         defaultIfEmpty(null)
       )
   }

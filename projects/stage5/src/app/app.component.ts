@@ -1,5 +1,7 @@
-import { Component } from '@angular/core'
+import { Component, effect, signal } from '@angular/core'
 import { MatCardModule } from '@angular/material/card'
+import { MatIcon } from '@angular/material/icon'
+import { MatSlideToggle } from '@angular/material/slide-toggle'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { FlexModule } from '@ngbracket/ngx-layout/flex'
 
@@ -12,6 +14,14 @@ import { CurrentWeatherComponent } from './current-weather/current-weather.compo
     <div>
       <mat-toolbar color="primary">
         <span data-testid="title">LocalCast Weather</span>
+        <div fxFlex></div>
+        <mat-icon>brightness_5</mat-icon>
+        <mat-slide-toggle
+          color="warn"
+          data-testid="darkmode-toggle"
+          [checked]="toggleState()"
+          (change)="toggleState.set($event.checked)"></mat-slide-toggle>
+        <mat-icon>bedtime</mat-icon>
       </mat-toolbar>
       <div fxLayoutAlign="center">
         <div class="mat-caption v-pad">Your city, your forecast, right now!</div>
@@ -42,8 +52,17 @@ import { CurrentWeatherComponent } from './current-weather/current-weather.compo
     MatToolbarModule,
     MatCardModule,
     CitySearchComponent,
+    MatIcon,
+    MatSlideToggle,
   ],
 })
 export class AppComponent {
-  constructor() {}
+  private darkClassName = 'dark-theme'
+  readonly toggleState = signal(localStorage.getItem(this.darkClassName) === 'true')
+  constructor() {
+    effect(() => {
+      localStorage.setItem(this.darkClassName, this.toggleState().toString())
+      document.documentElement.classList.toggle(this.darkClassName, this.toggleState())
+    })
+  }
 }
